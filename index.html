@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Impromptu - Speaking Practice</title>
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script type="text/javascript">
+    (function(c,l,a,r,i,t,y){
+        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+    })(window, document, "clarity", "script", "vs619jrx5q");
+  </script>
+</head>
+<body data-state="idle">
+
+  <!-- IDLE -->
+  <div class="stage-idle">
+    <h1 class="app-title">Impromptu</h1>
+    <div class="app-steps">
+      <div class="app-step"><span class="app-step-num">1</span><span>Get a random topic</span></div>
+      <div class="app-step"><span class="app-step-num">2</span><span>Prepare your thoughts for 1 minute</span></div>
+      <div class="app-step"><span class="app-step-num">3</span><span>Give your speech for 1 minute</span></div>
+    </div>
+    <div class="framework-section">
+      <div class="framework-label">
+        <span>Choose your speech framework</span>
+        <button class="btn-help" aria-label="Learn about frameworks" id="btn-help">?</button>
+      </div>
+      <div class="framework-toggle">
+        <button class="toggle-btn active" data-framework="storyarc">Story Arc</button>
+        <button class="toggle-btn" data-framework="prep">PREP</button>
+        <button class="toggle-btn" data-framework="star">STAR</button>
+      </div>
+    </div>
+    <div class="filters">
+      <select id="category-filter">
+        <option value="">All Categories</option>
+        <option value="general">General</option>
+        <option value="philosophical">Philosophical</option>
+        <option value="funny">Funny</option>
+        <option value="hypothetical">Hypothetical</option>
+        <option value="personal">Personal</option>
+        <option value="opinion">Opinion</option>
+        <option value="professional">Professional</option>
+        <option value="creative">Creative</option>
+      </select>
+      <select id="difficulty-filter">
+        <option value="">All Levels</option>
+        <option value="easy">Easy</option>
+        <option value="medium">Medium</option>
+        <option value="hard">Hard</option>
+      </select>
+    </div>
+    <button class="btn-start">Start Practice</button>
+  </div>
+
+  <!-- TOPIC -->
+  <div class="stage-topic">
+    <div class="topic-display">
+      <p class="topic-text" id="topic-text"></p>
+    </div>
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="progress-bar"></div>
+    </div>
+  </div>
+
+  <!-- TRANSITION -->
+  <div class="stage-transition">
+    <div class="transition-content">
+      <p class="transition-topic" id="transition-topic"></p>
+      <p class="transition-label" id="transition-label">Preparation begins in...</p>
+      <span class="transition-countdown" id="transition-countdown">5</span>
+    </div>
+  </div>
+
+  <!-- PREP -->
+  <div class="stage-prep">
+    <div class="topic-card">
+      <p class="topic-card-text" id="prep-topic-text"></p>
+    </div>
+    <div class="timer-container">
+      <svg class="timer-svg" viewBox="0 0 200 200">
+        <circle class="timer-bg" cx="100" cy="100" r="90" fill="none" stroke-width="8"></circle>
+        <circle class="timer-ring" id="prep-timer-ring" cx="100" cy="100" r="90" fill="none" stroke-width="8" stroke-linecap="round" stroke-dasharray="565.49" stroke-dashoffset="0" transform="rotate(-90 100 100)"></circle>
+      </svg>
+      <div class="timer-display" id="prep-timer-display" aria-live="polite">01:00</div>
+    </div>
+    <div class="framework-stepper" id="prep-stepper"></div>
+  </div>
+
+  <!-- SPEECH -->
+  <div class="stage-speech">
+    <div class="topic-card">
+      <p class="topic-card-text" id="speech-topic-text"></p>
+    </div>
+    <div class="timer-container">
+      <svg class="timer-svg" viewBox="0 0 200 200">
+        <circle class="timer-bg" cx="100" cy="100" r="90" fill="none" stroke-width="8"></circle>
+        <circle class="timer-ring" id="speech-timer-ring" cx="100" cy="100" r="90" fill="none" stroke-width="8" stroke-linecap="round" stroke-dasharray="565.49" stroke-dashoffset="0" transform="rotate(-90 100 100)"></circle>
+      </svg>
+      <div class="timer-display" id="speech-timer-display" aria-live="polite">01:00</div>
+    </div>
+    <div class="framework-compact" id="speech-framework"></div>
+  </div>
+
+  <!-- COMPLETE -->
+  <div class="stage-complete">
+    <div class="confetti-container">
+      <div class="confetti-piece" style="left:3%;background:#1A3C34;animation-delay:0s;width:8px;height:8px;"></div>
+      <div class="confetti-piece" style="left:7%;background:#E4A959;animation-delay:0.1s;width:10px;height:10px;"></div>
+      <div class="confetti-piece" style="left:10%;background:#FF6B6B;animation-delay:0.2s;width:12px;height:12px;"></div>
+      <div class="confetti-piece" style="left:14%;background:#4ECDC4;animation-delay:0.3s;width:9px;height:9px;"></div>
+      <div class="confetti-piece" style="left:18%;background:#FFE66D;animation-delay:0.05s;width:11px;height:11px;"></div>
+      <div class="confetti-piece" style="left:22%;background:#95E1D3;animation-delay:0.4s;width:8px;height:8px;"></div>
+      <div class="confetti-piece" style="left:25%;background:#2A5A4E;animation-delay:0.15s;width:10px;height:10px;"></div>
+      <div class="confetti-piece" style="left:29%;background:#FF6B6B;animation-delay:0.55s;width:12px;height:12px;"></div>
+      <div class="confetti-piece" style="left:33%;background:#E4A959;animation-delay:0.7s;width:9px;height:9px;"></div>
+      <div class="confetti-piece" style="left:36%;background:#4ECDC4;animation-delay:0.25s;width:10px;height:10px;"></div>
+      <div class="confetti-piece" style="left:40%;background:#1A3C34;animation-delay:0.85s;width:11px;height:11px;"></div>
+      <div class="confetti-piece" style="left:44%;background:#FFE66D;animation-delay:0.35s;width:8px;height:8px;"></div>
+      <div class="confetti-piece" style="left:47%;background:#95E1D3;animation-delay:1.0s;width:12px;height:12px;"></div>
+      <div class="confetti-piece" style="left:51%;background:#FF6B6B;animation-delay:0.45s;width:10px;height:10px;"></div>
+      <div class="confetti-piece" style="left:55%;background:#2A5A4E;animation-delay:1.1s;width:9px;height:9px;"></div>
+      <div class="confetti-piece" style="left:58%;background:#E4A959;animation-delay:0.6s;width:11px;height:11px;"></div>
+      <div class="confetti-piece" style="left:62%;background:#4ECDC4;animation-delay:1.3s;width:8px;height:8px;"></div>
+      <div class="confetti-piece" style="left:65%;background:#FFE66D;animation-delay:0.75s;width:10px;height:10px;"></div>
+      <div class="confetti-piece" style="left:69%;background:#1A3C34;animation-delay:1.5s;width:12px;height:12px;"></div>
+      <div class="confetti-piece" style="left:72%;background:#95E1D3;animation-delay:0.9s;width:9px;height:9px;"></div>
+      <div class="confetti-piece" style="left:76%;background:#FF6B6B;animation-delay:1.6s;width:10px;height:10px;"></div>
+      <div class="confetti-piece" style="left:79%;background:#2A5A4E;animation-delay:1.05s;width:11px;height:11px;"></div>
+      <div class="confetti-piece" style="left:83%;background:#E4A959;animation-delay:1.7s;width:8px;height:8px;"></div>
+      <div class="confetti-piece" style="left:86%;background:#4ECDC4;animation-delay:1.2s;width:12px;height:12px;"></div>
+      <div class="confetti-piece" style="left:89%;background:#FFE66D;animation-delay:1.8s;width:10px;height:10px;"></div>
+      <div class="confetti-piece" style="left:92%;background:#1A3C34;animation-delay:1.35s;width:9px;height:9px;"></div>
+      <div class="confetti-piece" style="left:94%;background:#95E1D3;animation-delay:1.9s;width:11px;height:11px;"></div>
+      <div class="confetti-piece" style="left:96%;background:#FF6B6B;animation-delay:1.45s;width:8px;height:8px;"></div>
+      <div class="confetti-piece" style="left:98%;background:#2A5A4E;animation-delay:2.0s;width:10px;height:10px;"></div>
+      <div class="confetti-piece" style="left:5%;background:#E4A959;animation-delay:1.55s;width:12px;height:12px;"></div>
+    </div>
+    <h2 class="complete-title">Well Done!</h2>
+    <div class="stats-card">
+      <p class="stats-topic" id="stats-topic"></p>
+      <p class="stats-framework" id="stats-framework"></p>
+      <p class="stats-sessions" id="stats-sessions"></p>
+    </div>
+    <div class="complete-actions">
+      <button class="btn-again">Go Again</button>
+      <button class="btn-settings-link">Change Settings</button>
+    </div>
+  </div>
+
+  <!-- CONTROLS BAR -->
+  <div class="controls-bar">
+    <button class="ctrl-btn ctrl-pause" aria-label="Pause" id="btn-pause">Pause</button>
+    <div class="stage-dots">
+      <span class="dot" data-stage="topic"></span>
+      <span class="dot" data-stage="prep"></span>
+      <span class="dot" data-stage="speech"></span>
+    </div>
+    <button class="ctrl-btn ctrl-new" aria-label="New Topic">New Topic</button>
+  </div>
+
+  <!-- FRAMEWORKS HELP -->
+  <div class="help-overlay" id="help-overlay">
+    <div class="help-page">
+      <div class="help-header">
+        <h2 class="help-title">Speech Frameworks</h2>
+        <button class="btn-help-close" id="btn-help-close" aria-label="Close">&times;</button>
+      </div>
+      <p class="help-intro">A framework gives your impromptu speech structure. Pick one before you start — it will guide you step-by-step during your preparation time.</p>
+
+      <div class="help-card">
+        <h3>Story Arc</h3>
+        <p class="help-card-tagline">Best for: storytelling &amp; engaging the audience</p>
+        <div class="help-steps">
+          <div class="help-step"><span class="help-letter">H</span><div><strong>Hook</strong><br>Open with something attention-grabbing — a bold claim, a question, or a vivid image.</div></div>
+          <div class="help-step"><span class="help-letter">D</span><div><strong>Detail</strong><br>Fill in the background. Set the scene, provide context, and build understanding.</div></div>
+          <div class="help-step"><span class="help-letter">E</span><div><strong>Example</strong><br>Bring it to life with a specific story, anecdote, or concrete example.</div></div>
+          <div class="help-step"><span class="help-letter">C</span><div><strong>Close</strong><br>Wrap up with a memorable takeaway — circle back to your hook or leave a lasting thought.</div></div>
+        </div>
+        <div class="help-example">
+          <p class="help-example-label">Example — Topic: "What is the best advice you ever received?"</p>
+          <ul>
+            <li><strong>H:</strong> "The best advice I ever got nearly made me quit my job."</li>
+            <li><strong>D:</strong> My mentor told me to stop chasing promotions and start chasing problems worth solving.</li>
+            <li><strong>E:</strong> I switched teams to work on a messy project no one wanted — within a year it became our flagship product.</li>
+            <li><strong>C:</strong> "Chase the hard problems. The titles will follow."</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="help-card">
+        <h3>PREP</h3>
+        <p class="help-card-tagline">Best for: making a clear argument or sharing an opinion</p>
+        <div class="help-steps">
+          <div class="help-step"><span class="help-letter">P</span><div><strong>Point</strong><br>State your main point clearly and directly. What do you believe?</div></div>
+          <div class="help-step"><span class="help-letter">R</span><div><strong>Reason</strong><br>Explain why. Give one or two solid reasons that support your point.</div></div>
+          <div class="help-step"><span class="help-letter">E</span><div><strong>Example</strong><br>Make it real with a concrete example, fact, or personal experience.</div></div>
+          <div class="help-step"><span class="help-letter">P</span><div><strong>Point (restate)</strong><br>Circle back to your original point. Reinforce it with confidence.</div></div>
+        </div>
+        <div class="help-example">
+          <p class="help-example-label">Example — Topic: "Should remote work be the default?"</p>
+          <ul>
+            <li><strong>P:</strong> Yes — remote work should be the default for knowledge workers.</li>
+            <li><strong>R:</strong> It eliminates commutes, boosts focus time, and lets companies hire from anywhere.</li>
+            <li><strong>E:</strong> My team went fully remote in 2020 and our productivity scores actually went up 15%.</li>
+            <li><strong>P:</strong> Remote work isn't a perk — it should be the starting point.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="help-card">
+        <h3>STAR</h3>
+        <p class="help-card-tagline">Best for: experience-based topics &amp; professional scenarios</p>
+        <div class="help-steps">
+          <div class="help-step"><span class="help-letter">S</span><div><strong>Situation</strong><br>Set the scene. Where were you? What was the context?</div></div>
+          <div class="help-step"><span class="help-letter">T</span><div><strong>Task</strong><br>What was the challenge or responsibility you faced?</div></div>
+          <div class="help-step"><span class="help-letter">A</span><div><strong>Action</strong><br>What did you actually do? Be specific about your actions.</div></div>
+          <div class="help-step"><span class="help-letter">R</span><div><strong>Result</strong><br>What happened? Share the outcome and what you learned.</div></div>
+        </div>
+        <div class="help-example">
+          <p class="help-example-label">Example — Topic: "Tell us about a challenge you overcame"</p>
+          <ul>
+            <li><strong>S:</strong> Last year, I was leading a product launch with a two-week deadline.</li>
+            <li><strong>T:</strong> Our main developer left unexpectedly, and I had to fill the gap while managing the team.</li>
+            <li><strong>A:</strong> I restructured the sprint, paired junior devs with seniors, and handled the critical code path myself.</li>
+            <li><strong>R:</strong> We shipped on time, and the team's confidence soared — they knew they could handle anything.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/topics.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
