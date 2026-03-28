@@ -374,8 +374,8 @@ function initSpeech() {
 
   // Build compact framework
   speechFramework.innerHTML = fw.steps.map(function(step, i) {
-    return '<span class="step-ref" data-index="' + i + '">' + step.letter + '</span>';
-  }).join(' <span class="step-separator">&gt;</span> ');
+    return '<span class="step-ref" data-index="' + i + '">' + step.label + '</span>';
+  }).join('<span class="step-sep">›</span>');
 
   // Reset timer ring
   ring.style.strokeDashoffset = '0';
@@ -459,6 +459,18 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   helpOverlay.addEventListener('click', function(e) {
     if (e.target === helpOverlay) helpOverlay.classList.remove('active');
+  });
+
+  // Tips overlay
+  var tipsOverlay = document.getElementById('tips-overlay');
+  document.getElementById('btn-tips').addEventListener('click', function() {
+    tipsOverlay.classList.add('active');
+  });
+  document.getElementById('btn-tips-close').addEventListener('click', function() {
+    tipsOverlay.classList.remove('active');
+  });
+  tipsOverlay.addEventListener('click', function(e) {
+    if (e.target === tipsOverlay) tipsOverlay.classList.remove('active');
   });
 
   // Framework toggle buttons
