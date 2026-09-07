@@ -123,28 +123,90 @@ function formatTime(ms) {
   return String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
 }
 
+var memorySettings = Object.create(null);
+var storageUnavailable = false;
+var topicFailureMessage = '';
+
+function updateAppMessage() {
+  var element = document.getElementById('app-message');
+  if (!element) return;
+  element.textContent = topicFailureMessage || (storageUnavailable
+    ? 'Practice works, but this browser cannot save your settings or history. They will last only in this tab.'
+    : '');
+  element.hidden = !element.textContent;
+}
+
+function readSetting(key) {
+  if (!storageUnavailable) {
+    try {
+      memorySettings[key] = localStorage.getItem(key);
+    } catch (_) {
+      storageUnavailable = true;
+      updateAppMessage();
+    }
+  }
+  return memorySettings[key] == null ? null : memorySettings[key];
+}
+
+function writeSetting(key, value) {
+  memorySettings[key] = String(value);
+  if (storageUnavailable) return;
+  try {
+    localStorage.setItem(key, String(value));
+  } catch (_) {
+    storageUnavailable = true;
+    updateAppMessage();
+  }
+}
+
+function loadedTopics() {
+  return typeof TOPICS !== 'undefined' && Array.isArray(TOPICS) ? TOPICS : [];
+}
+
 function selectTopic() {
   var category = document.getElementById('category-filter').value;
   var difficulty = document.getElementById('difficulty-filter').value;
-  var usedIds = JSON.parse(localStorage.getItem('impromptu-usedTopics') || '[]');
+  var usedIds = [];
+  try {
+    var savedIds = JSON.parse(readSetting('impromptu-usedTopics') || '[]');
+    if (Array.isArray(savedIds)) usedIds = savedIds;
+  } catch (_) {
+    // Question history is optional; malformed history must not stop practice.
+  }
 
-  var pool = TOPICS;
+  var pool = loadedTopics();
   if (category) pool = pool.filter(function(t) { return t.category === category; });
   if (difficulty) pool = pool.filter(function(t) { return t.difficulty === difficulty; });
+  if (pool.length === 0) return null;
 
   var available = pool.filter(function(t) { return !usedIds.includes(t.id); });
 
   if (available.length === 0) {
-    localStorage.setItem('impromptu-usedTopics', '[]');
+    usedIds = [];
     available = pool;
   }
 
   var topic = available[Math.floor(Math.random() * available.length)];
 
   usedIds.push(topic.id);
-  localStorage.setItem('impromptu-usedTopics', JSON.stringify(usedIds));
+  writeSetting('impromptu-usedTopics', JSON.stringify(usedIds));
 
   return topic;
+}
+
+function syncDifficultyOptions() {
+  var category = document.getElementById('category-filter').value;
+  var select = document.getElementById('difficulty-filter');
+  var levels = new Set(loadedTopics().filter(function(topic) {
+    return !category || topic.category === category;
+  }).map(function(topic) { return topic.difficulty; }));
+  Array.from(select.options).forEach(function(option) {
+    option.disabled = Boolean(option.value) && !levels.has(option.value);
+  });
+  if (select.selectedIndex < 0 || select.options[select.selectedIndex].disabled) {
+    select.value = '';
+    writeSetting('impromptu-difficulty', '');
+  }
 }
 
 function updateStageDots(state) {
@@ -165,6 +227,19 @@ function getActiveStepIndex(progress, steps) {
 // ─── State Machine ────────────────────────────
 
 function setState(newState) {
+  // Resolve the question before showing the topic screen.
+  if (newState === 'topic') {
+    var nextTopic = selectTopic();
+    if (!nextTopic) {
+      topicFailureMessage = 'No questions are loaded for this selection. Refresh the page to load the current question list, or choose another category.';
+      newState = 'idle';
+    } else {
+      currentTopic = nextTopic;
+      topicFailureMessage = '';
+    }
+    updateAppMessage();
+  }
+
   // Stop any running timer
   if (currentTimer) {
     currentTimer.stop();
@@ -217,9 +292,10 @@ function setState(newState) {
 
 function initIdle() {
   // Load saved settings
-  var savedFramework = localStorage.getItem('impromptu-framework') || 'storyarc';
-  var savedCategory = localStorage.getItem('impromptu-category') || '';
-  var savedDifficulty = localStorage.getItem('impromptu-difficulty') || '';
+  var savedFramework = readSetting('impromptu-framework') || 'storyarc';
+  var savedCategory = readSetting('impromptu-category') || '';
+  var savedDifficulty = readSetting('impromptu-difficulty') || '';
+  if (!Object.prototype.hasOwnProperty.call(FRAMEWORKS, savedFramework)) savedFramework = 'storyarc';
 
   currentFramework = savedFramework;
 
@@ -230,7 +306,11 @@ function initIdle() {
 
   // Set select values
   document.getElementById('category-filter').value = savedCategory;
+  if (document.getElementById('category-filter').selectedIndex < 0) document.getElementById('category-filter').value = '';
   document.getElementById('difficulty-filter').value = savedDifficulty;
+  syncDifficultyOptions();
+  if (loadedTopics().length === 0) topicFailureMessage = 'The question list did not load. Refresh this page to try again.';
+  updateAppMessage();
 
   // Focus start button
   var startBtn = document.querySelector('.btn-start');
@@ -240,8 +320,6 @@ function initIdle() {
 // ─── TOPIC (5s) ───────────────────────────────
 
 function initTopic() {
-  currentTopic = selectTopic();
-
   // Set topic text in all places
   document.getElementById('topic-text').textContent = currentTopic.text;
   document.getElementById('prep-topic-text').textContent = currentTopic.text;
@@ -422,8 +500,8 @@ function initSpeech() {
 
 function initComplete() {
   // Increment session count
-  var sessions = parseInt(localStorage.getItem('impromptu-sessions') || '0', 10) + 1;
-  localStorage.setItem('impromptu-sessions', String(sessions));
+  var sessions = Math.max(0, parseInt(readSetting('impromptu-sessions') || '0', 10) || 0) + 1;
+  writeSetting('impromptu-sessions', String(sessions));
 
   // Show stats
   document.getElementById('stats-topic').textContent = currentTopic ? currentTopic.text : '';
@@ -481,18 +559,23 @@ document.addEventListener('DOMContentLoaded', function() {
       });
       btn.classList.add('active');
       currentFramework = btn.dataset.framework;
-      localStorage.setItem('impromptu-framework', currentFramework);
+      writeSetting('impromptu-framework', currentFramework);
     });
   });
 
   // Category filter
   document.getElementById('category-filter').addEventListener('change', function() {
-    localStorage.setItem('impromptu-category', this.value);
+    writeSetting('impromptu-category', this.value);
+    syncDifficultyOptions();
+    topicFailureMessage = '';
+    updateAppMessage();
   });
 
   // Difficulty filter
   document.getElementById('difficulty-filter').addEventListener('change', function() {
-    localStorage.setItem('impromptu-difficulty', this.value);
+    writeSetting('impromptu-difficulty', this.value);
+    topicFailureMessage = '';
+    updateAppMessage();
   });
 
   // Start button
